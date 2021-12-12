@@ -1,33 +1,52 @@
 package com.example.quiz.create_quiz;
 
+import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
+import android.content.Intent;
+import android.media.Image;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
+import com.example.quiz.MainActivity;
 import com.example.quiz.QuizTemplate;
 import com.example.quiz.R;
+import com.google.android.gms.tasks.OnCanceledListener;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.android.gms.tasks.Task;
+import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.database.DataSnapshot;
+import com.google.firebase.database.DatabaseError;
+import com.google.firebase.database.DatabaseReference;
+import com.google.firebase.database.FirebaseDatabase;
+import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 public class CreateQuiz extends AppCompatActivity {
-    ArrayList<QuizTemplate> quizTemplates;
+    List<QuizTemplate> quizTemplates;
+    private DatabaseReference mDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         Objects.requireNonNull(getSupportActionBar()).setDisplayHomeAsUpEnabled(true);
+        setContentView(R.layout.activity_create_quiz);
 
         quizTemplates = new ArrayList<>();
-        setContentView(R.layout.activity_create_quiz);
+        mDatabase = FirebaseDatabase.getInstance().getReference();
         RecyclerView recyclerView = findViewById(R.id.quiz_questions);
         QuizRecyclerAdapter quizRecyclerAdapter = new QuizRecyclerAdapter(this, quizTemplates);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, RecyclerView.VERTICAL, false));
@@ -44,6 +63,56 @@ public class CreateQuiz extends AppCompatActivity {
                 addToQuizTemplatesRecyclerView(quizRecyclerAdapter, dialog);
             }
         });
+
+        EditText topicName = findViewById(R.id.topic_name);
+        ImageButton saveButton = findViewById(R.id.save_btn);
+        saveButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                pushQuizTemplatesToFirebase(topicName.getText().toString());
+            }
+        });
+
+    }
+
+    private void pushQuizTemplatesToFirebase(String topicName) {
+        Toast.makeText(getApplicationContext(), topicName + " " + MainActivity.USER_EMAIL, Toast.LENGTH_SHORT).show();
+        mDatabase.child(topicName).child(MainActivity.USER_NAME).child("latest").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DataSnapshot> task) {
+                if(!task.isSuccessful()){
+                    Log.d("quizz", "Error getting data", task.getException());
+                }else{
+                    String quizNo = String.valueOf(task.getResult().getValue());
+                    int quizNumber = 0;
+                    if(!quizNo.equals("null")){
+                        Toast.makeText(getApplicationContext(), quizNo, Toast.LENGTH_SHORT).show();
+                        quizNumber = Integer.parseInt(quizNo) + 1;
+                    }
+                    pushTemplatesToDatabaseUndeer(topicName, quizNumber);
+
+                }
+            }
+        });
+    }
+
+    private void pushTemplatesToDatabaseUndeer(String topicName, int quizNumber) {
+        Log.d("quizz", "pushTemplatesToDatabase :"+ topicName + " " + quizNumber + " " + quizTemplates.size());
+        mDatabase.child(topicName).child(MainActivity.USER_NAME).child(String.valueOf(quizNumber)).setValue(quizTemplates).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    Toast.makeText(getApplicationContext(), "successfully pushed to database", Toast.LENGTH_SHORT).show();
+                    increaseLatestValue(topicName, quizNumber);
+                    onSupportNavigateUp();
+                }
+            }
+        });
+    }
+
+    private void increaseLatestValue(String topicName, int quizNumber) {
+        mDatabase.child(topicName).child(MainActivity.USER_NAME).child("latest").setValue(quizNumber);
+
     }
 
     private void addToQuizTemplatesRecyclerView(QuizRecyclerAdapter quizRecyclerAdapter, Dialog dialog) {
@@ -54,17 +123,18 @@ public class CreateQuiz extends AppCompatActivity {
             public void onClick(View view) {
 
                 String question = ((EditText)dialog.findViewById(R.id.question)).getText().toString();
-                String []options = new String[4];
-                options[0] = ((EditText)dialog.findViewById(R.id.option1)).getText().toString();
-                options[1] = ((EditText)dialog.findViewById(R.id.option2)).getText().toString();
-                options[2] = ((EditText)dialog.findViewById(R.id.option3)).getText().toString();
-                options[3] = ((EditText)dialog.findViewById(R.id.option4)).getText().toString();
+                List<String> options = new ArrayList<>();
+                options.add(((EditText)dialog.findViewById(R.id.option1)).getText().toString());
+                options.add(((EditText)dialog.findViewById(R.id.option2)).getText().toString());
+                options.add(((EditText)dialog.findViewById(R.id.option3)).getText().toString());
+                options.add(((EditText)dialog.findViewById(R.id.option4)).getText().toString());
                 String right_option = ((EditText)dialog.findViewById(R.id.right_option)).getText().toString();
                 String support_answer = ((EditText)dialog.findViewById(R.id.support_for_answer)).getText().toString();
 
-                if(notNull(question, options[0], options[1], options[2], options[3], right_option)) {
+                if(notNull(question, options.get(0), options.get(1), options.get(2), options.get(3), right_option)) {
                     QuizTemplate quizTemplate = new QuizTemplate(question, options, right_option);
                     if (notNull(support_answer)) quizTemplate.setReasonForAnswer(support_answer);
+                    else quizTemplate.setReasonForAnswer("");
                     quizTemplates.add(quizTemplate);
                     quizRecyclerAdapter.notifyItemInserted(quizTemplates.size());
                     dialog.dismiss();

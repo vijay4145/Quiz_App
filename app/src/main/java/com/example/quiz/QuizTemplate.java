@@ -1,17 +1,19 @@
 package com.example.quiz;
 
+import java.util.List;
+
 public class QuizTemplate {
     String question;
-    String []options;
+    List<String> options;
     String rightOption;
     String reasonForAnswer;
-    public QuizTemplate(String question, String []options, String rightOption){
+    public QuizTemplate(String question, List<String> options, String rightOption){
         this.question = question;
         this.options = options;
         this.rightOption = rightOption;
     }
 
-    public QuizTemplate(String question, String[] options, String rightOption, String reasonForAnswer) {
+    public QuizTemplate(String question, List<String> options, String rightOption, String reasonForAnswer) {
         this.question = question;
         this.options = options;
         this.rightOption = rightOption;
@@ -26,11 +28,11 @@ public class QuizTemplate {
         this.question = question;
     }
 
-    public String[] getOptions() {
+    public List<String> getOptions() {
         return options;
     }
 
-    public void setOptions(String[] options) {
+    public void setOptions(List<String> options) {
         this.options = options;
     }
 

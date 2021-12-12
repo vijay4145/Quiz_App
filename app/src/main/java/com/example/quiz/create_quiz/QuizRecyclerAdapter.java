@@ -15,13 +15,14 @@ import com.example.quiz.QuizTemplate;
 import com.example.quiz.R;
 
 import java.util.ArrayList;
+import java.util.List;
 
 
 public class QuizRecyclerAdapter extends RecyclerView.Adapter<QuizRecyclerAdapter.ViewHolder>{
     private Context context;
-    private ArrayList<QuizTemplate> quizTemplate;
+    private List<QuizTemplate> quizTemplate;
 
-    public QuizRecyclerAdapter(Context context, ArrayList<QuizTemplate> quizTemplate) {
+    public QuizRecyclerAdapter(Context context, List<QuizTemplate> quizTemplate) {
         this.context = context;
         this.quizTemplate = quizTemplate;
     }
@@ -40,12 +41,12 @@ public class QuizRecyclerAdapter extends RecyclerView.Adapter<QuizRecyclerAdapte
 
         holder.quizTemplateTextView[7].setText(String.valueOf(position+1));
         holder.quizTemplateTextView[0].setText(quizTemplate.get(position).getQuestion());
-        holder.quizTemplateTextView[1].setText("1)"+ quizTemplate.get(position).getOptions()[0]);
-        holder.quizTemplateTextView[2].setText("2)" + quizTemplate.get(position).getOptions()[1]);
-        holder.quizTemplateTextView[3].setText("3)" + quizTemplate.get(position).getOptions()[2]);
-        holder.quizTemplateTextView[4].setText("4)" + quizTemplate.get(position).getOptions()[3]);
+        holder.quizTemplateTextView[1].setText("1)"+ quizTemplate.get(position).getOptions().get(0));
+        holder.quizTemplateTextView[2].setText("2)" + quizTemplate.get(position).getOptions().get(1));
+        holder.quizTemplateTextView[3].setText("3)" + quizTemplate.get(position).getOptions().get(2));
+        holder.quizTemplateTextView[4].setText("4)" + quizTemplate.get(position).getOptions().get(3));
         holder.quizTemplateTextView[5].setText("Correct Option: " + quizTemplate.get(position).getRightOption());
-        if(quizTemplate.get(position).getReasonForAnswer() == null){
+        if(quizTemplate.get(position).getReasonForAnswer().equals("")){
             holder.quizTemplateTextView[6].setVisibility(View.GONE);
         }else {
             holder.quizTemplateTextView[6].setText("Reason: " + quizTemplate.get(position).getReasonForAnswer());
