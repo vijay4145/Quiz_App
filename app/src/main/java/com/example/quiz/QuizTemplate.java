@@ -20,6 +20,8 @@ public class QuizTemplate {
         this.reasonForAnswer = reasonForAnswer;
     }
 
+    public QuizTemplate(){}
+
     public String getQuestion() {
         return question;
     }

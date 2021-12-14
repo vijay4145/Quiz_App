@@ -6,8 +6,6 @@ import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
 import android.app.Dialog;
-import android.content.Intent;
-import android.media.Image;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
@@ -20,16 +18,11 @@ import android.widget.Toast;
 import com.example.quiz.MainActivity;
 import com.example.quiz.QuizTemplate;
 import com.example.quiz.R;
-import com.google.android.gms.tasks.OnCanceledListener;
 import com.google.android.gms.tasks.OnCompleteListener;
-import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
-import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -76,7 +69,6 @@ public class CreateQuiz extends AppCompatActivity {
     }
 
     private void pushQuizTemplatesToFirebase(String topicName) {
-        Toast.makeText(getApplicationContext(), topicName + " " + MainActivity.USER_EMAIL, Toast.LENGTH_SHORT).show();
         mDatabase.child(topicName).child(MainActivity.USER_NAME).child("latest").get().addOnCompleteListener(new OnCompleteListener<DataSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DataSnapshot> task) {
@@ -86,7 +78,6 @@ public class CreateQuiz extends AppCompatActivity {
                     String quizNo = String.valueOf(task.getResult().getValue());
                     int quizNumber = 0;
                     if(!quizNo.equals("null")){
-                        Toast.makeText(getApplicationContext(), quizNo, Toast.LENGTH_SHORT).show();
                         quizNumber = Integer.parseInt(quizNo) + 1;
                     }
                     pushTemplatesToDatabaseUndeer(topicName, quizNumber);
@@ -97,7 +88,6 @@ public class CreateQuiz extends AppCompatActivity {
     }
 
     private void pushTemplatesToDatabaseUndeer(String topicName, int quizNumber) {
-        Log.d("quizz", "pushTemplatesToDatabase :"+ topicName + " " + quizNumber + " " + quizTemplates.size());
         mDatabase.child(topicName).child(MainActivity.USER_NAME).child(String.valueOf(quizNumber)).setValue(quizTemplates).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {

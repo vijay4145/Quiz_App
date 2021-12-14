@@ -34,14 +34,17 @@ public class MainActivity extends AppCompatActivity {
     private GoogleSignInClient mGoogleSignInClient;
     public static String USER_NAME;
     public static String USER_EMAIL;
+    private SignInButton signInButton;
 
     @Override
     public void onStart() {
         super.onStart();
         // Check if user is signed in (non-null) and update UI accordingly.
         FirebaseUser currentUser = mAuth.getCurrentUser();
-        if(currentUser != null)
+        if(currentUser != null) {
+            signInButton.setVisibility(View.GONE);
             updateUI(currentUser);
+        }
     }
 
     @Override
@@ -59,7 +62,7 @@ public class MainActivity extends AppCompatActivity {
                 .build();
 
         mGoogleSignInClient = GoogleSignIn.getClient(this, gso);
-        SignInButton signInButton = findViewById(R.id.signInButton);
+        signInButton = findViewById(R.id.signInButton);
         signInButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
