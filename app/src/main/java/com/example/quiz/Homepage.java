@@ -20,7 +20,6 @@ import androidx.appcompat.app.AppCompatActivity;
 import com.example.quiz.databinding.ActivityHomepageBinding;
 
 public class Homepage extends AppCompatActivity {
-
     private AppBarConfiguration mAppBarConfiguration;
     private ActivityHomepageBinding binding;
 
