@@ -15,11 +15,6 @@ This app will make our learning fun as we can attempt any quiz of our choice.
 
 ## Screenshots
 
-<img src="app_screenshots/picture1.jpeg" width="320">
-<img src="app_screenshots/picture2.jpeg" width="320">
-<img src="app_screenshots/picture3.jpeg" width="320">
-<img src="app_screenshots/picture4.jpeg" width="320">
-<img src="app_screenshots/picture5.jpeg" width="320">
-<img src="app_screenshots/picture6.jpeg" width="320">
-<img src="app_screenshots/picture7.jpeg" width="320">
-<img src="app_screenshots/picture8.jpeg" width="320">
+<img src="app_screenshots/picture1.jpeg" width="320">  <img src="app_screenshots/picture2.jpeg" width="320"> <img src="app_screenshots/picture3.jpeg" width="320">
+<img src="app_screenshots/picture4.jpeg" width="320"> <img src="app_screenshots/picture5.jpeg" width="320">  <img src="app_screenshots/picture6.jpeg" width="320">
+<img src="app_screenshots/picture7.jpeg" width="320">  <img src="app_screenshots/picture8.jpeg" width="320">
